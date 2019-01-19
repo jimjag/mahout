@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.mahout</groupId>
     <artifactId>engine</artifactId>
-    <version>0.14.0</version>
+    <version>0.14.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -58,6 +58,18 @@
             <configuration>
               <tasks>
                 <copy file="target/mahout-hdfs-${project.version}.jar" tofile="../../lib/mahout-hdfs-${project.version}.jar" />
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>copy-javadocs</id>
+            <phase>install</phase>
+            <configuration>
+              <tasks>
+                <copy file="target/mahout-hdfs-${project.version}-javadoc.jar" tofile="../../docs/mahout-hdfs-${project.version}-javadoc.jar" />
               </tasks>
             </configuration>
             <goals>
