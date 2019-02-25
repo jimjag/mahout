@@ -28,7 +28,7 @@
   <groupId>org.apache.mahout</groupId>
   <artifactId>mahout</artifactId>
 
-  <version>0.14.0-SNAPSHOT</version>
+  <version>0.14.1-SNAPSHOT</version>
 
   <packaging>pom</packaging>
   <name>Apache Mahout</name>
@@ -415,6 +415,7 @@
     <profile>
       <id>all</id>
       <modules>
+        <module>community/spark-cli-drivers</module>
         <module>community/community-engines</module>
         <module>community/community-engines/flink-batch</module>
         <module>community/community-engines/h2o</module>
@@ -549,6 +550,12 @@
           </plugin>
         </plugins>
       </reporting>
+    </profile>
+    <profile>
+      <id>spark-cli-drivers</id>
+      <modules>
+        <module>community/spark-cli-drivers</module>
+      </modules>
     </profile>
     <profile>
       <id>viennacl</id>
