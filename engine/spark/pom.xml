@@ -22,12 +22,12 @@
 
   <parent>
     <groupId>org.apache.mahout</groupId>
-    <artifactId>engine</artifactId>
+    <artifactId>mahout-engine</artifactId>
     <version>14.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>spark_2.11</artifactId>
+  <artifactId>mahout-spark_2.11</artifactId>
   <name>- Mahout Spark Engine</name>
   <description>
     Mahout Bindings for Apache Spark
@@ -35,6 +35,15 @@
 
   <packaging>jar</packaging>
 
+  <!-- per http://www.apache.org/dev/publishing-maven-artifacts.html#prepare-poms ensure that all poms have SCM managment.-->
+  <!--<scm>
+    <connection>scm:git:git@github.com:apache/mahout.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/mahout.git</developerConnection>
+    <url>https://gitbox.apache.org/repos/asf?p=mahout.git;a=tree;h=refs/heads/${project.scm.tag};hb=${project.scm.tag}</url>
+    <tag>mahout-14.1
+    </tag>
+  </scm>
+-->
   <properties>
 
   </properties>
@@ -57,8 +66,15 @@
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
-        <version>3.2.2</version>
+        <version>4.0.2</version>
         <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <phase>dont-execute</phase>
+            <goals>
+              <goal>doc-jar</goal>
+            </goals>
+          </execution>
           <execution>
             <id>add-scala-sources</id>
             <phase>initialize</phase>
@@ -83,9 +99,7 @@
         </executions>
       </plugin>
 
-
       <!--this is what scalatest recommends to do to enable scala tests -->
-
       <!-- disable surefire -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -98,7 +112,7 @@
       <plugin>
         <groupId>org.scalatest</groupId>
         <artifactId>scalatest-maven-plugin</artifactId>
-        <version>2.0.0</version>
+        <version>${scalatest.maven.plugin.version}</version>
         <executions>
           <execution>
             <id>test</id>
@@ -107,6 +121,9 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+          <argLine>-Xmx4g</argLine>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -139,8 +156,8 @@
             <phase>package</phase>
             <configuration>
               <tasks>
-                <copy file="target/spark_${scala.compat.version}-${project.version}.jar" tofile="../../lib/spark_${scala.compat.version}-${project.version}.jar" />
-                <copy file="target/spark_${scala.compat.version}-${project.version}-dependency-reduced.jar" tofile="../../lib/spark_${scala.compat.version}-${project.version}-dependency-reduced.jar" />
+                <copy file="target/mahout-spark_${scala.compat.version}-${project.version}.jar" tofile="../../lib/mahout-spark_${scala.compat.version}-${project.version}.jar" />
+                <copy file="target/mahout-spark_${scala.compat.version}-${project.version}-dependency-reduced.jar" tofile="../../lib/mahout-spark_${scala.compat.version}-${project.version}-dependency-reduced.jar" />
               </tasks>
             </configuration>
             <goals>
@@ -149,10 +166,12 @@
           </execution>
           <execution>
             <id>copy-javadocs</id>
-            <phase>install</phase>
+            <!-- DO not not producing generated java/scaladocs right until Java 8+ tag bug has been fixed
+            or javadoc generation is fixed to generate intrepretable  doc tags  -->
+            <phase>dont-execute</phase>
             <configuration>
               <tasks>
-                <copy file="target/spark_${scala.compat.version}-${project.version}-javadoc.jar" tofile="../../docs/spark_${scala.compat.version}-${project.version}.jar" />
+                <copy file="target/mahout-spark_${scala.compat.version}-${project.version}-javadoc.jar" tofile="../../docs/mahout-spark_${scala.compat.version}-${project.version}.jar" />
               </tasks>
             </configuration>
             <goals>
@@ -196,7 +215,7 @@
             <fileset>
               <directory>../../lib/</directory>
               <includes>
-                <include>spark_*.jar</include>
+                <include>mahout-spark_*.jar</include>
               </includes>
               <followSymlinks>false</followSymlinks>
             </fileset>
@@ -207,6 +226,14 @@
   </build>
 
   <dependencies>
+
+    <!-- https://mvnrepository.com/artifact/org.scala-lang/scala-reflect -->
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-reflect</artifactId>
+      <version>${scala.version}</version>
+    </dependency>
+
 
     <!-- spark stuff - need to put this first to use spark's mahout dependencies in tests -->
     <dependency>
@@ -224,13 +251,13 @@
     <!-- mahout stuff -->
     <dependency>
       <groupId>org.apache.mahout</groupId>
-      <artifactId>core_${scala.compat.version}</artifactId>
+      <artifactId>mahout-core_${scala.compat.version}</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.mahout</groupId>
-      <artifactId>mahout-hdfs</artifactId>
+      <artifactId>mahout-hdfs_${scala.compat.version}</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -243,7 +270,7 @@
 
     <dependency>
       <groupId>org.apache.mahout</groupId>
-      <artifactId>core_${scala.compat.version}</artifactId>
+      <artifactId>mahout-core_${scala.compat.version}</artifactId>
       <version>${project.version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>

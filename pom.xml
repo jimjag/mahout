@@ -15,8 +15,8 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
- <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">  <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.apache</groupId>
@@ -99,33 +99,35 @@
       <connection>scm:git:git@github.com:apache/mahout.git</connection>
       <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/mahout.git</developerConnection>
       <url>https://gitbox.apache.org/repos/asf?p=mahout.git;a=tree;h=refs/heads/${project.scm.tag};hb=${project.scm.tag}</url>
-      <tag>mahout-14.1
+      <tag>mahout-14.1_${scala.compat.version}
       </tag>
    </scm>
 
   <properties>
-    <!--<skipTests>false</skipTests>-->
     <apache-rat.plugin.version>0.13</apache-rat.plugin.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <mjavadoc.version>2.10.3</mjavadoc.version>
     <slf4j.version>1.7.22</slf4j.version>
-    <scala.version>2.11.6</scala.version>
+    <scala.version>2.11.8</scala.version>
     <scala.compat.version>2.11</scala.compat.version>
     <source.plugin.version>3.0.1</source.plugin.version>
-    <spark.version>2.3.0</spark.version>
-    <spark.compat.version>2.3</spark.compat.version>
+    <spark.version>2.4.3</spark.version>
+    <spark.compat.version>2.4</spark.compat.version>
     <depgraph.plugin.version>3.3.0</depgraph.plugin.version>
-
+    <mahout.skip.distribution>true</mahout.skip.distribution>
     <!-- `mvn site` throws a hissy fit searching no longer existing repos if this is not set false -->
     <dependency.locations.enabled>false</dependency.locations.enabled>
-
-    <!--hack to turn off linting og generated Javadocs.  this is an error in Oracle Java8 and should be fixed in java9
-     http://openjdk.java.net/jeps/212-->
+    <mahout.skip.distribution>true</mahout.skip.distribution>
+    <!--hack to turn off linting og generated Javadocs.
+      this is an error in Oracle Java8 and should be fixed in > java8
+     http://openjdk.java.net/jeps/212 -->
     <additionalparam>-Xdoclint:-html</additionalparam>
     <!--EndHack-->
+    <compile.flags />
 
-    <!--
+
+
     <maven.clover.multiproject>true</maven.clover.multiproject>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <msurefire.version>2.18.1</msurefire.version>
@@ -135,17 +137,16 @@
 
     <mscala.version>3.2.0</mscala.version>
     <hbase.version>1.0.0</hbase.version>
-
-
-    <scala.compat.version>2.10</scala.compat.version>
-    <scala.version>2.10.4</scala.version>
-    <spark.version>1.6.3</spark.version>
-    <flink.version>1.1.4</flink.version>
-    <h2o.version>0.1.25</h2o.version>
-    <jackson.version>2.7.4</jackson.version>
     <hadoop.version>2.4.1</hadoop.version>
-    <hadoop.classifier>hadoop2</hadoop.classifier>
-    -->
+    <build.plugins.plugin.version>3.0.0</build.plugins.plugin.version>
+    <scalatest.maven.plugin.version>2.0.0</scalatest.maven.plugin.version>
+    <mahout.collection.codegen.plugin.version>1.0</mahout.collection.codegen.plugin.version>
+    <!--
+        <flink.version>1.1.4</flink.version>
+        <h2o.version>0.1.25</h2o.version>
+        <jackson.version>2.7.4</jackson.version>
+        <hadoop.classifier>hadoop2</hadoop.classifier>
+        -->
   </properties>
   <issueManagement>
     <system>Jira</system>
@@ -167,8 +168,11 @@
   <modules>
     <module>core</module>
     <module>engine</module>
+    <module>engine/spark</module>
+    <module>engine/hdfs</module>
     <module>community</module>
-    <!-- <module>examples</module> -->
+    <module>community/spark-cli-drivers</module>
+    <module>distribution</module>
   </modules>
 
   <dependencyManagement>
@@ -186,6 +190,7 @@
       </dependency>
 
       <!-- scala stuff -->
+      <!-- set the scala version here only -->
       <dependency>
         <groupId>org.scalatest</groupId>
         <artifactId>scalatest_${scala.compat.version}</artifactId>
@@ -224,6 +229,15 @@
         <artifactId>log4j</artifactId>
         <version>1.2.17</version>
       </dependency>
+<!--
+      <dependency>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+&lt;!&ndash;
+        <version>3.1.1</version>
+&ndash;&gt;
+        <type>maven-plugin</type>
+      </dependency>-->
 
     </dependencies>
   </dependencyManagement>
@@ -242,11 +256,16 @@
           <optimize>true</optimize>
         </configuration>
       </plugin>
-      <plugin>
-      <groupId>org.apache.maven.plugins</groupId>
+<!--
+      <plugin>&ndash;&gt;
+-->
+     <!-- <groupId>org.apache.maven.plugins</groupId>
        <artifactId>maven-release-plugin</artifactId>
         <version>2.5.2</version>
         <configuration>
+&lt;!&ndash;
+          <preparationGoals>clean package install</preparationGoals>
+&ndash;&gt;
           <useReleaseProfile>true</useReleaseProfile>
           <releaseProfiles>apache-release</releaseProfiles>
           <goals>deploy</goals>
@@ -254,7 +273,7 @@
           <arguments>${arguments}</arguments>
         </configuration>
         </plugin>
-      <!-- generate java doc -->
+      &lt;!&ndash; generate java-->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -384,7 +403,7 @@
                     <version>[1.8,)</version>
                   </requireJavaVersion>
                   <requireMavenVersion>
-                    <version>[3.3.3,)</version>
+                    <version>[3.3.9,)</version>
                   </requireMavenVersion>
                 </rules>
               </configuration>
@@ -416,229 +435,368 @@
 
   <profiles>
     <profile>
-      <id>all</id>
-      <modules>
-        <module>core</module>
-        <module>engine</module>
-        <module>community/spark-cli-drivers</module>
-        <!--<module>community/community-engines</module>-->
-        <!--<module>community/community-engines/flink-batch</module>-->
-        <!--<module>community/community-engines/h2o</module>-->
-        <!--<module>community/mahout-mr</module>-->
-        <!--<module>experimental</module>-->
-        <!--<module>experimental/viennacl</module>-->
-        <!--<module>experimental/viennacl-omp</module>-->
-      </modules>
-    </profile>
-    <profile>
-      <id>apache-release</id>
-      <modules>
-        <module>core</module>
-        <module>engine</module>
-        <module>community/spark-cli-drivers</module>
-        <!--<module>community/community-engines</module>-->
-        <!--<module>community/community-engines/flink-batch</module>-->
-        <!--<module>community/community-engines/h2o</module>-->
-        <!--<module>community/mahout-mr</module>-->
-        <!--<module>experimental</module>-->
-        <!--<module>experimental/viennacl</module>-->
-        <!--<module>experimental/viennacl-omp</module>-->
-      </modules>
-      <properties>
-        <skipTests>false</skipTests>
-        <maven.test.skip>false</maven.test.skip>
-      </properties>
-      <build>
-        <plugins>
+    <id>release.prepare</id>
+    <properties>
+      <skipTests>true</skipTests>
+      <pmd.skip>true</pmd.skip>
+      <checkstyle.skip>true</checkstyle.skip>
+      <skipAssembly>false</skipAssembly>
+    </properties>
+  </profile>
+
+
+  <profile>
+    <id>sourcecheck</id>
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <showDeprecation>true</showDeprecation>
+            <showWarnings>true</showWarnings>
+            <compilerArgument>${compile.flags}</compilerArgument>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>sourcecheck</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>checkstyle</goal>
+              </goals>
+              <configuration>
+                <failsOnError>false</failsOnError>
+                <!-- classpath -->
+                <configLocation>mahout-checkstyle.xml</configLocation>
+                <consoleOutput>true</consoleOutput>
+                <linkXRef>false</linkXRef>
+                <sourceDirectory>distribution/src</sourceDirectory>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-pmd-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>sourcecheck</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>check</goal>
+                <goal>cpd-check</goal>
+              </goals>
+              <configuration>
+                <failOnViolation>false</failOnViolation>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>findbugs-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>sourcecheck</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>check</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </build>
+  </profile>
+  <profile>
+    <id>ci</id>
+    <activation>
+      <activeByDefault>false</activeByDefault>
+      <property>
+        <name>env.JENKINS_URL</name>
+      </property>
+    </activation>
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>remove-old-mahout-artifacts</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>remove-project-artifact</goal>
+              </goals>
+              <configuration>
+                <failOnError>false</failOnError>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </build>
+  </profile>
+
+  <profile>
+    <id>apache-release</id>
+    <build>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-release-plugin</artifactId>
+          <version>2.5.3</version>
+          <configuration>
+            <useReleaseProfile>true</useReleaseProfile>
+            <autoVersionSubmodules>true</autoVersionSubmodules>
+            <preparationGoals>clean package install</preparationGoals>
+            <releaseProfiles>apache.releases.https</releaseProfiles>
+            <goals>deploy</goals>
+            <arguments>-Papache-release ${arguments}</arguments>
+            <waitBeforeTagging>10</waitBeforeTagging>
+          </configuration>
+
+        </plugin>
+
+        <plugin>
+          <inherited>true</inherited>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+	  <version>2.8.2</version>
+          <executions>
+            <execution>
+              <id>apache.releases.https</id>
+              <phase>deploy</phase>
+              <goals>
+                <goal>deploy</goal>
+              </goals>
+            </execution>
+          </executions>
+
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>attach-sources</id>
+              <goals>
+                <goal>jar-no-fork</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>attach-javadocs</id>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <!-- We want to sign the artifact, the POM, and all attached artifacts -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <version>${source.plugin.version}</version>
-            <configuration>
-              <skipSource>true</skipSource>
-            </configuration>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.6</version>
             <executions>
               <execution>
-                <id>attach-sources</id>
+                <id>sign-release-artifacts</id>
+                <phase>verify</phase>
                 <goals>
-                  <goal>jar-no-fork</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
-            <configuration>
-              <skip>false</skip>
-            </configuration>
-            <executions>
-              <execution>
-                <id>test-jar</id>
-                <goals>
-                  <goal>test-jar</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-	      <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <executions>
-              <execution>
-                 <id>bin-assembly</id>
-                 <phase>package</phase>
-                 <goals>
-                   <goal>single</goal>
-                 </goals>
-               <configuration>
-                  <skipAssembly>${mahout.skip.distribution}</skipAssembly>
-                  <descriptors>
-                    <descriptor>buildtools/assembly/bin.xml</descriptor>
-                  </descriptors>
-                  <tarLongFileMode>gnu</tarLongFileMode>
-		          <appendAssemblyId>true</appendAssemblyId>
-             </configuration>
-              </execution>
-              <execution>
-                <id>src-assembly</id>
-                <phase>package</phase>
-                <goals>
-                  <goal>single</goal>
+                  <goal>sign</goal>
                 </goals>
                 <configuration>
-                  <skipAssembly>${mahout.skip.distribution}</skipAssembly>
-                  <descriptors>
-                    <descriptor>buildtools/assembly/src.xml</descriptor>
-                  </descriptors>
-                  <tarLongFileMode>gnu</tarLongFileMode>
-                  <appendAssemblyId>true</appendAssemblyId>
+                  <keyname>${gpg.keyname}</keyname>
+                  <passphraseServerId>${gpg.passphrase}</passphraseServerId>
                 </configuration>
               </execution>
             </executions>
           </plugin>
 
-          <plugin>
-            <artifactId>maven-release-plugin</artifactId>
-            <configuration>
-              <releaseProfiles>apache-release</releaseProfiles>
-              <preparationGoals>clean package install</preparationGoals>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <skipTests>false</skipTests>
-              <skipExec>true</skipExec>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-      <reporting>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.rat</groupId>
-            <artifactId>apache-rat-plugin</artifactId>
-          </plugin>
-          <plugin>
-            <artifactId>maven-project-info-reports-plugin</artifactId>
-            <configuration>
-              <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-javadoc-plugin</artifactId>
-            <reportSets>
-              <reportSet>
-                <id>aggregate</id>
-                <reports>
-                  <report>javadoc-no-fork</report>
-                  <report>test-javadoc-no-fork</report>
-                  <report>aggregate</report>
-                </reports>
-              </reportSet>
-              <reportSet>
-                <id>html</id>
-                <reports>
-                  <report>javadoc</report>
-                </reports>
-              </reportSet>
-            </reportSets>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-site-plugin</artifactId>
-          </plugin>
-          <plugin>
-            <groupId>com.github.ferstl</groupId>
-            <artifactId>depgraph-maven-plugin</artifactId>
-            <version>${depgraph.plugin.version}</version>
-          </plugin>
-        </plugins>
-      </reporting>
-    </profile>
-    <profile>
-      <id>spark-cli-drivers</id>
-      <modules>
-        <module>community/spark-cli-drivers</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>viennacl</id>
-      <modules>
-        <module>experimental/viennacl</module>
-      </modules>
-    </profile>
-    <profile>
-      <id>viennacl-omp</id>
-      <modules>
-        <module>experimental/viennacl-omp</module>
-      </modules>
-    </profile>
-  </profiles>
+        <!--<plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>sign-release-artifacts</id>
+              <goals>
+                <goal>sign</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>-->
+      </plugins>
+    </build>
+  </profile>
+  <!-- END SNIPPET: release-profile -->
+ </profiles>
+<reporting>
+<plugins>
 
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>3.0.0</version>
-        <configuration>
-          <configLocation>buildtools/src/main/resources/mahout-checkstyle.xml</configLocation>
-        </configuration>
-      </plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <version>3.7.1</version>
-        <configuration>
-          <reportPlugins>
-            <plugin>
-              <artifactId>maven-project-info-reports-plugin</artifactId>
-              <!--<version>2.2</version>-->
-            </plugin>
-            <plugin>
-              <groupId>net.alchim31.maven</groupId>
-              <artifactId>scala-maven-plugin</artifactId>
-              <!--<version>3.4.1</version>-->
+  <!-- surefire runs unit tests -->
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-surefire-report-plugin</artifactId>
+    <version>${msurefire.version}</version>
+  </plugin>
+  <!-- checkstyle -->
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-checkstyle-plugin</artifactId>
+    <version>${mcheckstyle.version}</version>
+    <configuration>
+      <!-- classpath -->
+      <configLocation>mahout-checkstyle.xml</configLocation>
+      <consoleOutput>true</consoleOutput>
+    </configuration>
+  </plugin>
+  <!-- test coverage plugin -->
+  <plugin>
+    <groupId>com.atlassian.maven.plugins</groupId>
+    <artifactId>maven-clover2-plugin</artifactId>
+    <version>3.1.12</version>
+    <configuration>
+      <generateHistorical>true</generateHistorical>
+      <licenseLocation>buildtools/clover.license</licenseLocation>
+      <generatePdf>false</generatePdf>
+      <generateXml>true</generateXml>
+      <generateHtml>true</generateHtml>
+    </configuration>
+  </plugin>
+  <!-- generate java doc -->
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-javadoc-plugin</artifactId>
+    <version>${mjavadoc.version}</version>
+  </plugin>
+  <!-- code duplication - copy and paste detection -->
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-pmd-plugin</artifactId>
+    <version>${mpmd.version}</version>
+    <configuration>
+      <rulesets>
+        <!-- classpath -->
+        <ruleset>mahout-pmd-ruleset.xml</ruleset>
+      </rulesets>
+      <targetJdk>${maven.compiler.target}</targetJdk>
+      <linkXRef>false</linkXRef>
+      <includeTests>true</includeTests>
+      <verbose>true</verbose>
+    </configuration>
+  </plugin>
+  <!-- catch code tags -->
+  <plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>taglist-maven-plugin</artifactId>
+    <version>2.4</version>
+    <configuration>
+      <tags>
+        <tag>TODO</tag>
+        <tag>todo</tag>
+      </tags>
+    </configuration>
+  </plugin>
+  <!-- findbugs -->
+  <plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>findbugs-maven-plugin</artifactId>
+    <version>${mfindbugs.version}</version>
+    <configuration>
+      <xmlOutput>true</xmlOutput>
+      <threshold>Low</threshold>
+      <effort>Default</effort>
+      <!--visitors>FindDeadLocalStores,UnreadFields</visitors-->
+      <!--omitVisitors>FindDeadLocalStores,UnreadFields</omitVisitors-->
+      <debug>true</debug>
+      <relaxed>true</relaxed>
+      <!-- classpath -->
+      <excludeFilterFile>findbugs-exclude.xml</excludeFilterFile>
+    </configuration>
+  </plugin>
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-changes-plugin</artifactId>
+    <version>2.9</version>
+    <configuration>
+      <onlyCurrentVersion>true</onlyCurrentVersion>
+      <columnNames>Type,Key,Summary,Status,Resolution,Assignee</columnNames>
+      <sortColumnNames>Type,Key</sortColumnNames>
+    </configuration>
+    <reportSets>
+      <reportSet>
+        <reports>
+          <report>jira-report</report>
+        </reports>
+      </reportSet>
+    </reportSets>
+  </plugin>
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-project-info-reports-plugin</artifactId>
+    <version>2.8</version>
+    <reportSets>
+      <reportSet>
+        <reports>
+          <report>index</report>
+          <report>dependencies</report>
+          <report>dependency-convergence</report>
+          <report>dependency-management</report>
+        </reports>
+      </reportSet>
+    </reportSets>
+  </plugin>
+  <plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>taglist-maven-plugin</artifactId>
+    <version>2.4</version>
+  </plugin>
+
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-site-plugin</artifactId>
+    <version>3.7.1</version>
+    <configuration>
+      <reportPlugins>
+        <plugin>
+          <artifactId>maven-project-info-reports-plugin</artifactId>
+          <!--<version>2.2</version>-->
+        </plugin>
+         <plugin>
+          <groupId>net.alchim31.maven</groupId>
+          <artifactId>scala-maven-plugin</artifactId>
+          <version>4.0.2</version>
               <configuration>
-                <jvmArgs>
+               <jvmArgs>
                   <jvmArg>-Xms64m</jvmArg>
                   <jvmArg>-Xmx1024m</jvmArg>
                 </jvmArgs>
               </configuration>
-            </plugin>
-          </reportPlugins>
+         </plugin>
+       </reportPlugins>
+     </configuration>
+    </plugin>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-checkstyle-plugin</artifactId>
+      <version>3.0.0</version>
+        <configuration>
+          <configLocation>buildtools/src/main/resources/mahout-checkstyle.xml</configLocation>
         </configuration>
-      </plugin>
-
-
-
+       </plugin>
     </plugins>
   </reporting>
-
 </project>
 

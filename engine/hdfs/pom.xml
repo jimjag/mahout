@@ -22,18 +22,28 @@
 
   <parent>
     <groupId>org.apache.mahout</groupId>
-    <artifactId>engine</artifactId>
+    <artifactId>mahout-engine</artifactId>
     <version>14.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <!-- modules inherit parent's group id and version. -->
-  <artifactId>mahout-hdfs</artifactId>
+  <artifactId>mahout-hdfs_2.11</artifactId>
   <name>- Mahout HDFS Support</name>
   <description>Scalable machine learning libraries</description>
 
+
   <packaging>jar</packaging>
 
+  <!-- per http://www.apache.org/dev/publishing-maven-artifacts.html#prepare-poms ensure that all poms have SCM managment.-->
+  <!--<scm>
+    <connection>scm:git:git@github.com:apache/mahout.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/mahout.git</developerConnection>
+    <url>https://gitbox.apache.org/repos/asf?p=mahout.git;a=tree;h=refs/heads/${project.scm.tag};hb=${project.scm.tag}</url>
+    <tag>mahout-14.1
+    </tag>
+  </scm>
+-->
   <build>
     <plugins>
       <!-- ensure licenses -->
@@ -45,9 +55,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+
       </plugin>
 
       <!-- copy jars to lib/ -->
+      <!-- copy jars to top directory, which is MAHOUT_HOME -->
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <version>1.4</version>
@@ -57,7 +69,7 @@
             <phase>package</phase>
             <configuration>
               <tasks>
-                <copy file="target/mahout-hdfs-${project.version}.jar" tofile="../../lib/mahout-hdfs-${project.version}.jar" />
+                <copy file="target/mahout-hdfs_${scala.compat.version}-${project.version}.jar" tofile="../../lib/mahout-hdfs_${scala.compat.version}-${project.version}.jar" />
               </tasks>
             </configuration>
             <goals>
@@ -66,10 +78,10 @@
           </execution>
           <execution>
             <id>copy-javadocs</id>
-            <phase>install</phase>
+            <phase>package</phase>
             <configuration>
               <tasks>
-                <copy file="target/mahout-hdfs-${project.version}-javadoc.jar" tofile="../../docs/mahout-hdfs-${project.version}-javadoc.jar" />
+                <copy file="target/mahout-hdfs_${scala.compat.version}-${project.version}.jar" tofile="../../docs/mahout-hdfs_${scala.compat.version}-${project.version}-javadoc.jar" />
               </tasks>
             </configuration>
             <goals>
@@ -86,9 +98,16 @@
         <configuration>
           <filesets>
             <fileset>
-              <directory>../../lib/</directory>
+              <directory>$project.build.directory}/lib</directory>
               <includes>
-                <include>mahout-hdfs_*.jar</include>
+                <include>mahout-hdfs*.jar</include>
+              </includes>
+              <followSymlinks>false</followSymlinks>
+            </fileset>
+            <fileset>
+              <directory>../</directory>
+              <includes>
+                <include>mahout-hdfs*.jar</include>
               </includes>
               <followSymlinks>false</followSymlinks>
             </fileset>
@@ -108,75 +127,59 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+      </plugin>
+
+<!--      <plugin>-->
+<!--        <groupId>org.apache.maven.plugins</groupId>-->
+<!--        <artifactId>maven-remote-resources-plugin</artifactId>-->
+<!--        <configuration>-->
+<!--          <appendedResourcesDirectory>../src/main/appended-resources</appendedResourcesDirectory>-->
+<!--          <resourceBundles>-->
+<!--            <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>-->
+<!--          </resourceBundles>-->
+<!--          <supplementalModels>-->
+<!--            <supplementalModel>supplemental-models.xml</supplementalModel>-->
+<!--          </supplementalModels>-->
+<!--        </configuration>-->
+<!--      </plugin>-->
+      <!-- remove jars from top directory on clean -->
+
     </plugins>
+
+
+<!--    <resources>-->
+<!--      <resource>-->
+<!--        <directory>src/main/resources</directory>-->
+<!--      </resource>-->
+<!--      <resource>-->
+<!--        <directory>../src/conf</directory>-->
+<!--        <includes>-->
+<!--          <include>driver.classes.default.props</include>-->
+<!--        </includes>-->
+<!--      </resource>-->
+<!--    </resources>-->
+
   </build>
-  <!--<build>-->
-    <!--<resources>-->
-      <!--<resource>-->
-        <!--<directory>src/main/resources</directory>-->
-      <!--</resource>-->
-      <!--<resource>-->
-        <!--<directory>../src/conf</directory>-->
-        <!--<includes>-->
-          <!--<include>driver.classes.default.props</include>-->
-        <!--</includes>-->
-      <!--</resource>-->
-    <!--</resources>-->
-
-
-
-      <!--<plugin>-->
-        <!--<artifactId>maven-javadoc-plugin</artifactId>-->
-      <!--</plugin>-->
-
-      <!--<plugin>-->
-        <!--<artifactId>maven-source-plugin</artifactId>-->
-      <!--</plugin>-->
-
-      <!--<plugin>-->
-        <!--<groupId>org.apache.maven.plugins</groupId>-->
-        <!--<artifactId>maven-remote-resources-plugin</artifactId>-->
-        <!--<configuration>-->
-          <!--<appendedResourcesDirectory>../src/main/appended-resources</appendedResourcesDirectory>-->
-          <!--<resourceBundles>-->
-            <!--<resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>-->
-          <!--</resourceBundles>-->
-          <!--<supplementalModels>-->
-            <!--<supplementalModel>supplemental-models.xml</supplementalModel>-->
-          <!--</supplementalModels>-->
-        <!--</configuration>-->
-      <!--</plugin>-->
-      <!--&lt;!&ndash; remove jars from top directory on clean &ndash;&gt;-->
-      <!--<plugin>-->
-        <!--<artifactId>maven-clean-plugin</artifactId>-->
-        <!--<version>3.0.0</version>-->
-        <!--<configuration>-->
-          <!--<filesets>-->
-            <!--<fileset>-->
-              <!--<directory>../</directory>-->
-              <!--<includes>-->
-                <!--<include>mahout-hdfs*.jar</include>-->
-              <!--</includes>-->
-              <!--<followSymlinks>false</followSymlinks>-->
-            <!--</fileset>-->
-          <!--</filesets>-->
-        <!--</configuration>-->
-      <!--</plugin>-->
-    <!--</plugins>-->
-  <!--</build>-->
 
   <dependencies>
 
     <!-- our modules -->
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>core_${scala.compat.version}</artifactId>
+      <artifactId>mahout-core_${scala.compat.version}</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>core_${scala.compat.version}</artifactId>
+      <artifactId>mahout-core_${scala.compat.version}</artifactId>
       <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
@@ -186,7 +189,7 @@
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-client</artifactId>
-      <version>2.6.0</version>
+      <version>2.4.1</version>
     </dependency>
 
     <!--<dependency>-->

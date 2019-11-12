@@ -28,12 +28,23 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>mahout-integration</artifactId>
+  <artifactId>mahout-integration_${scala.compat.version}</artifactId>
   <name>-- Mahout Classic Integration</name>
   <description>Optional components of Mahout which generally support interaction with third party systems,
     formats, APIs, etc.</description>
 
   <packaging>jar</packaging>
+
+  <!-- per http://www.apache.org/dev/publishing-maven-artifacts.html#prepare-poms ensure that all poms have SCM managment.-->
+ <!-- <scm>
+    <connection>scm:git:git@github.com:apache/mahout.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/mahout.git</developerConnection>
+    <url>https://gitbox.apache.org/repos/asf?p=mahout.git;a=tree;h=refs/heads/${project.scm.tag};hb=${project.scm.tag}</url>
+    <tag>mahout-14.1
+    </tag>
+  </scm>
+-->
+
 
   <build>
     <plugins>
@@ -69,7 +80,7 @@
 
     <dependency>
       <groupId>org.apache.mahout</groupId>
-      <artifactId>core_2.11</artifactId>
+      <artifactId>core_${scala.compat.version}</artifactId>
       <version>${project.version}</version>
     </dependency>
 

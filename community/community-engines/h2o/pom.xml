@@ -22,12 +22,12 @@
 
   <parent>
     <groupId>org.apache.mahout</groupId>
-    <artifactId>community-engines</artifactId>
+    <artifactId>mahout-community-engines_2.11</artifactId>
     <version>14.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>mahout-h2o_${scala.compat.version}</artifactId>
+  <artifactId>mahout-h2o_2.11</artifactId>
   <name>-- Mahout H2O Engine (Community)</name>
   <description>
     H2O Backend for Mahout DSL
@@ -137,6 +137,7 @@
       <plugin>
         <groupId>org.scalatest</groupId>
         <artifactId>scalatest-maven-plugin</artifactId>
+        <version>${scalatest.maven.plugin.version}</version>
         <executions>
           <execution>
             <id>test</id>

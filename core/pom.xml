@@ -27,13 +27,22 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>core_2.11</artifactId>
+  <artifactId>mahout-core_2.11</artifactId>
   <name>Mahout Core</name>
   <description>High performance scientific and technical computing data structures and methods,
     mostly based on CERN's Colt Java API
   </description>
 
   <packaging>jar</packaging>
+
+ <!-- &lt;!&ndash; per http://www.apache.org/dev/publishing-maven-artifacts.html#prepare-poms ensure that all poms have SCM managment.&ndash;&gt;
+  <scm>
+    <connection>scm:git:git@github.com:apache/mahout.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/mahout.git</developerConnection>
+    <url>https://gitbox.apache.org/repos/asf?p=mahout.git;a=tree;h=refs/heads/${project.scm.tag};hb=${project.scm.tag}</url>
+    <tag>mahout-14.1
+    </tag>
+  </scm>-->
 
 
   <dependencies>
@@ -127,6 +136,7 @@
       <plugin>
         <groupId>org.apache.mahout</groupId>
         <artifactId>mahout-collection-codegen-plugin</artifactId>
+        <version>${mahout.collection.codegen.plugin.version}</version>
         <executions>
           <execution>
             <phase>generate-sources</phase>
@@ -153,6 +163,8 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${build.plugins.plugin.version}</version>
+
         <executions>
           <execution>
             <id>add-source</id>
@@ -185,8 +197,15 @@
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
-        <version>3.2.2</version>
+        <version>4.0.2</version>
         <executions>
+          <execution>
+          <id>attach-javadocs</id>
+            <phase>dont-execute</phase>
+            <goals>
+            <goal>doc-jar</goal>
+          </goals>
+        </execution>
           <execution>
             <id>add-scala-sources</id>
             <phase>initialize</phase>
@@ -224,7 +243,7 @@
       <plugin>
         <groupId>org.scalatest</groupId>
         <artifactId>scalatest-maven-plugin</artifactId>
-        <version>2.0.0</version>
+        <version>${scalatest.maven.plugin.version}</version>
         <executions>
           <execution>
             <id>test</id>
@@ -268,25 +287,25 @@
             <phase>package</phase>
             <configuration>
               <tasks>
-                <copy file="target/core_${scala.compat.version}-${project.version}.jar" tofile="../lib/core_${scala.compat.version}-${project.version}.jar" />
+                <copy file="target/mahout-core_${scala.compat.version}-${project.version}.jar" tofile="../lib/mahout-core_${scala.compat.version}-${project.version}.jar" />
               </tasks>
             </configuration>
             <goals>
               <goal>run</goal>
             </goals>
           </execution>
-          <execution>
-            <id>copy-javadocs</id>
-            <phase>install</phase>
-            <configuration>
-              <tasks>
-                <copy file="target/core_${scala.compat.version}-${project.version}-javadoc.jar" tofile="../docs/core_${scala.compat.version}-${project.version}-javadoc.jar" />
-              </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
+<!--          <execution>-->
+<!--            <id>copy-javadocs</id>-->
+<!--            <phase>install</phase>-->
+<!--            <configuration>-->
+<!--              <tasks>-->
+<!--                <copy file="target/core_${scala.compat.version}-${project.version}-javadoc.jar" tofile="../docs/core_${scala.compat.version}-${project.version}-javadoc.jar" />-->
+<!--              </tasks>-->
+<!--            </configuration>-->
+<!--            <goals>-->
+<!--              <goal>run</goal>-->
+<!--            </goals>-->
+<!--          </execution>-->
         </executions>
       </plugin>
 
@@ -299,7 +318,7 @@
             <fileset>
               <directory>../lib/</directory>
               <includes>
-                <include>core_*.jar</include>
+                <include>mahout-core_*.jar</include>
               </includes>
               <followSymlinks>false</followSymlinks>
             </fileset>

@@ -39,7 +39,7 @@
   </properties>
 
   <prerequisites>
-    <maven>3.3.3</maven>
+    <maven>3.3.9</maven>
   </prerequisites>
 
   <build>
@@ -57,7 +57,7 @@
             <configuration>
               <rules>
                 <requireJavaVersion>
-                  <version>[1.7,)</version>
+                  <version>[1.8,)</version>
                 </requireJavaVersion>
                   <requireMavenVersion>
                     <version>[3.3.3,)</version>
@@ -144,4 +144,10 @@
       </build>
     </profile>
   </profiles>
+
+  <scm>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/pom/tags/mahout-buildtools-14.1</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/pom/tags/mahout-buildtools-14.1</developerConnection>
+    <url>http://svn.apache.org/viewvc/maven/pom/tags/mahout-buildtools-14.1</url>
+  </scm>
 </project>

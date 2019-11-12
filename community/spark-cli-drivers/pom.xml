@@ -22,39 +22,62 @@
 
   <parent>
     <groupId>org.apache.mahout</groupId>
-    <artifactId>community</artifactId>
+    <artifactId>mahout-community</artifactId>
     <version>14.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>spark-cli-drivers_2.11</artifactId>
+  <artifactId>mahout-spark-cli-drivers_2.11</artifactId>
   <name>- Mahout Spark CLI Drivers</name>
   <description>These drivers will allow you to compile a handy Apache Spark App which utilizes Apache Mahout.
   </description>
+
+  <packaging>jar</packaging>
+
+  <!-- per http://www.apache.org/dev/publishing-maven-artifacts.html#prepare-poms ensure that all poms have SCM managment.-->
+ <!-- <scm>
+    <connection>scm:git:git@github.com:apache/mahout.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/mahout.git</developerConnection>
+    <url>https://gitbox.apache.org/repos/asf?p=mahout.git;a=tree;h=refs/heads/${project.scm.tag};hb=${project.scm.tag}</url>
+    <tag>mahout-14.1
+    </tag>
+  </scm>
+-->
+  <properties>
+    <maven.javadoc.skip>true</maven.javadoc.skip>
+  </properties>
 
   <dependencies>
 
     <dependency>
       <groupId>org.scalatest</groupId>
-      <artifactId>scalatest_${scala.compat.version}</artifactId>
+      <artifactId>scalatest_2.11</artifactId>
     </dependency>
 
+<!--    <dependency>-->
+<!--      <groupId>com.github.scopt</groupId>-->
+<!--      <artifactId>scopt_${scala.compat.version}</artifactId>-->
+<!--      <version>3.3.0</version>-->
+<!--    </dependency>-->
+
+    <!-- https://mvnrepository.com/artifact/com.github.scopt/scopt -->
     <dependency>
       <groupId>com.github.scopt</groupId>
       <artifactId>scopt_${scala.compat.version}</artifactId>
-      <version>3.3.0</version>
+      <version>3.7.1</version>
     </dependency>
+
 
     <!-- our stuff -->
     <dependency>
       <groupId>org.apache.mahout</groupId>
-      <artifactId>spark_${scala.compat.version}</artifactId>
+      <artifactId>mahout-spark_2.11</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.apache.mahout</groupId>
-      <artifactId>core_${scala.compat.version}</artifactId>
+      <artifactId>mahout-core_2.11</artifactId>
       <version>${project.version}</version>
       <classifier>tests</classifier>
       <scope>test</scope>
@@ -62,7 +85,7 @@
 
     <dependency>
       <groupId>org.apache.mahout</groupId>
-      <artifactId>spark_2.11</artifactId>
+      <artifactId>mahout-spark_2.11</artifactId>
       <version>${project.version}</version>
       <classifier>tests</classifier>
     </dependency>
@@ -134,7 +157,7 @@
             <phase>package</phase>
             <configuration>
                 <tasks>
-                  <copy file="target/spark-cli-drivers_${scala.compat.version}-${project.version}.jar" tofile="${project.basedir}/../../lib/spark-cli-drivers_${scala.compat.version}-${project.version}.jar" />
+                  <copy file="target/mahout-spark-cli-drivers_${scala.compat.version}-${project.version}.jar" tofile="${project.basedir}/../../lib/mahout-spark-cli-drivers_${scala.compat.version}-${project.version}.jar" />
                  <!-- <copy file="target/spark-cli-drivers_${scala.compat.version}-${project.version}-dependency-reduced.jar" tofile="${project.basedir}/../../lib/spark_${scala.compat.version}-${project.version}-dependency-reduced.jar" /> -->
                 </tasks>
               </configuration>
@@ -152,7 +175,7 @@
         <configuration>
           <filesets>
             <fileset>
-              <directory>${project.basedir}/lib/</directory>
+              <directory>${project.build.directory}/lib/</directory>
               <includes>
                 <include>spark-cli*</include>
                 <include>spark_*-dependency-reduced.jar</include>
@@ -160,7 +183,7 @@
               <followSymlinks>false</followSymlinks>
             </fileset>
             <fileset>
-              <directory>${project.basedir}/community/spark-cli-drivers/target/</directory>
+              <directory>${project.build.directory}/community/spark-cli-drivers/target/</directory>
               <includes>
                 <include>spark_*</include>
                 <include>spark_*-dependency-reduced.jar</include>
@@ -175,7 +198,7 @@
       <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>scala-maven-plugin</artifactId>
-        <version>3.2.2</version>
+        <version>4.0.2</version>
         <executions>
           <execution>
             <id>add-scala-sources</id>
@@ -218,7 +241,7 @@
       <plugin>
         <groupId>org.scalatest</groupId>
         <artifactId>scalatest-maven-plugin</artifactId>
-        <version>2.0.0</version>
+        <version>${scalatest.maven.plugin.version}</version>
         <executions>
           <execution>
             <id>test</id>
@@ -238,10 +261,4 @@
     </plugins>
   </build>
 
-  <packaging>jar</packaging>
-
-
-  <scm>
-    <tag>mahout-14.1</tag>
-  </scm>
 </project>

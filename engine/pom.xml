@@ -16,10 +16,8 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <parent>
     <groupId>org.apache.mahout</groupId>
     <artifactId>mahout</artifactId>
@@ -27,18 +25,27 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <artifactId>engine</artifactId>
+  <artifactId>mahout-engine</artifactId>
   <name>Mahout Engine</name>
-  <description>Parent of Various Engins on which you can run Mahout.
+  <description>Parent of Various Engines on which you can run Mahout.
   </description>
 
   <packaging>pom</packaging>
 
+  <!-- per http://www.apache.org/dev/publishing-maven-artifacts.html#prepare-poms ensure that all poms have SCM managment.-->
+  <!--<scm>
+    <connection>scm:git:git@github.com:apache/mahout.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/mahout.git</developerConnection>
+    <url>https://gitbox.apache.org/repos/asf?p=mahout.git;a=tree;h=refs/heads/${project.scm.tag};hb=${project.scm.tag}</url>
+    <tag>mahout-14.1
+    </tag>
+  </scm>
+-->
 
-  <modules>
-    <module>hdfs</module>
-    <module>spark</module>
-  </modules>
+<!--  <modules>-->
+<!--    <module>hdfs</module>-->
+<!--    <module>spark</module>-->
+<!--  </modules>-->
 
   <dependencies>
 
