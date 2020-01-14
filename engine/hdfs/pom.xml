@@ -23,12 +23,12 @@
   <parent>
     <groupId>org.apache.mahout</groupId>
     <artifactId>mahout-engine</artifactId>
-    <version>14.1-SNAPSHOT</version>
+    <version>14.2-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
   <!-- modules inherit parent's group id and version. -->
-  <artifactId>mahout-hdfs_2.11</artifactId>
+  <artifactId>mahout-hdfs_2.12</artifactId>
   <name>- Mahout HDFS Support</name>
   <description>Scalable machine learning libraries</description>
 
@@ -174,13 +174,13 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mahout-core_${scala.compat.version}</artifactId>
-      <version>${project.version}</version>
+      <version>14.2-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>mahout-core_${scala.compat.version}</artifactId>
-      <version>${project.version}</version>
+      <version>14.2-SNAPSHOT</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
