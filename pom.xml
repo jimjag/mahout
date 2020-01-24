@@ -99,7 +99,7 @@
       <connection>scm:git:git@github.com:apache/mahout.git</connection>
       <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/mahout.git</developerConnection>
       <url>https://gitbox.apache.org/repos/asf?p=mahout.git;a=tree;h=refs/heads/${project.scm.tag};hb=${project.scm.tag}</url>
-      <tag>mahout-14.1_${scala.compat.version}
+      <tag>mahout_${scala.compat.version}-${project.version}-${release.candidate}
       </tag>
    </scm>
 
@@ -119,6 +119,7 @@
     <!-- `mvn site` throws a hissy fit searching no longer existing repos if this is not set false -->
     <dependency.locations.enabled>false</dependency.locations.enabled>
     <mahout.skip.distribution>true</mahout.skip.distribution>
+    <release.candidate>RC4</release.candidate>
     <!--hack to turn off linting og generated Javadocs.
       this is an error in Oracle Java8 and should be fixed in > java8
      http://openjdk.java.net/jeps/212 -->
@@ -172,7 +173,7 @@
     <module>engine/hdfs</module>
     <module>community</module>
     <module>community/spark-cli-drivers</module>
-    <module>distribution</module>
+    <module>dist</module>
   </modules>
 
   <dependencyManagement>
@@ -612,6 +613,29 @@
             <waitBeforeTagging>10</waitBeforeTagging>
           </configuration>
 
+        </plugin>
+
+        <!-- Override pare t pom's assembly plugin for -Papache-release we have our assembly code and descriptors
+         in the /dist directory adhering to https://www.apache.org/dev/release-publishing#distribution  -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.apache.resources</groupId>
+              <artifactId>apache-source-release-assembly-descriptor</artifactId>
+              <version>1.0.6</version>
+            </dependency>
+          </dependencies>
+          <executions>
+            <execution>
+              <id>source-release-assembly</id>
+              <phase>dont-exeute</phase>
+              <goals>
+                <goal>dont-execute</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
 
         <plugin>
