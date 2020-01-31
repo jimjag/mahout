@@ -26,7 +26,7 @@
         <version>14.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>dist</artifactId>
+    <artifactId>apache-mahout-distribution_2.11</artifactId>
 
     <name>Mahout Release Package</name>
     <description>Distribution Package</description>
@@ -64,10 +64,8 @@
         </dependency>
     </dependencies>
 
-
-
-
         <build>
+         <defaultGoal>install</defaultGoal>
           <plugins>
             <plugin>
               <artifactId>maven-assembly-plugin</artifactId>
@@ -89,7 +87,7 @@
                                 <descriptor>${project.basedir}/src/main/resources/assembly/bin.xml</descriptor>
                             </descriptors>
                             <tarLongFileMode>gnu</tarLongFileMode>
-                            <appendAssemblyId>true</appendAssemblyId>
+                            <appendAssemblyId>false</appendAssemblyId>
                         </configuration>
                     </execution>
                     <execution>
@@ -111,28 +109,6 @@
                     </execution>
                 </executions>
             </plugin>
-              <plugin>
-              <artifactId>maven-antrun-plugin</artifactId>
-              <version>1.4</version>
-              <executions>
-                  <execution>
-                      <id>copy</id>
-                      <phase>package</phase>
-                      <configuration>
-                          <tasks>
-                              <copy todir="release">
-                                  <fileset dir="target"
-                                           includes="*.*"
-                                   />
-                              </copy>
-                          </tasks>
-                      </configuration>
-                      <goals>
-                          <goal>run</goal>
-                      </goals>
-                  </execution>
-              </executions>
-          </plugin>
         </plugins>
 <!--            <pluginManagement>-->
 <!--                <plugins>-->
